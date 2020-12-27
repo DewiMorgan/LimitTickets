@@ -22,11 +22,28 @@ Principles
 * Don't overwrite globals, especially constants! (or global styles!)
 * Gamepad mode compatibility?
 * Graceful crash-handling?
-* "use hooks on the class def if possible, or on the object when you do not have access to the class def" - ???
-* Don't undo your hooks ("when you hook the instance with the intention to undo the hook later,
-  you have to be careful how you do that, since the class works with metatables. when you simply set
-  the original function on the table, you'll actually prevent hooks on the class itself from working")
+* Take care hooking (see below).
 * Ensure replaced API fns will still work if ZOS adds more params/return values in the future. So use (...) as the params.
 * Use ZO_ hooking fns where possible: https://github.com/esoui/esoui/blob/a34599f2cba93196976512d71f3b850cc9975ed9/esoui/libraries/utility/zo_hook.lua
 * All hooks should fail gracefully! Not break anything if they fail.
 * Don't depend on libs that change the UI, eg libslashcommander 
+* For performance, avoid LUA's string concatenation, instead using string.format("%s %s", string1, string2), ZO_GenerateCommaSeparatedList(), or table.concat.
+* Use OOP https://www.lua.org/pil/16.html
+
+Hooking gotchas
+---------------
+Sirinsidator wrote:
+  use hooks on the class def if possible, or on the object when you do not have access to the class def
+  [...] when you hook the instance with the intention to undo the hook later,
+  you have to be careful how you do that, since the class works with metatables. When you simply set
+  the original function on the table, you'll actually prevent hooks on the class itself from working.
+  [...] Don't undo your hooks.
+
+That is:
+Say you have `obj`, which inherits a `obj:fn` from it parent class definition through the `obj.__index` metatable. (this is how OOP works in Lua).
+Then if you do `obj:fn = ...`, then `obj` will no longer inherit `fn`, but rather will use its own member function that you gave it.
+So anything that hooks that parent's method after your hook, won't be able to affect `obj`.
+
+Anything that hooks a method after you did, but before you removed it, will have hooked your
+instance of the method. So if you saved a copy of the original, unhooked method and stick it back
+there, you will remove all those later hooks, not just your own.

@@ -12,6 +12,7 @@ DONE: Make it actually not interact. That weird FISHING_MANAGER block.
 DONE: Make the message only appear once.
 DONE: Make max tickets a const.
 DONE: Test if the three trailing underscore params are needed. (they aren't)
+
 1.1.0
 NAH: Use things like interaction types (sadly always null) and extraInfo=0 to restrict the list of things that need to be blocked.
 DONE: Feature: Add a toggle setting for the ZO_Alert if you max your tickets.
@@ -21,6 +22,10 @@ DONE: FIX: Removed incorrect "went from 0/N" notification when zoning. Thanks to
 DONE: FIX: Don't decorate reticle for empty containers.
 DONE: FIX: A tooltip incorrectly claimed pickpocketable NPCs may be affected: in fact, they never get the "[E] Talk" reticle prompt.
 DONE: FIX: remove empty, unused settings.lua file, and various other code cleanup.
+
 1.1.1
 DONE: FIX: fix duplicate display of debug toggle confirmation
 DONE: Bugfix: don't trigger crouching for assistance if crouch for everyone is on. Thanks to danbest82 for reporting.
+DONE: Code Cleanup: Remove repetition in settings by writing a checkbox wrapper.
+DONE: Code Cleanup: Get rid of hardcoded inline constants.
+MEH: Code Cleanup: Remove most debugging notices.
