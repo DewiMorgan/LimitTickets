@@ -1,0 +1,225 @@
+Events
+======
+
+Various events: Gifting. I don't know how that works because nobody's gifted me one!
+
+There are four verbs that matter:
+Examine: only ever the cyrodiil noticeboards.
+Search: only ever corpses. You can't assume corpsename, since "Consolidate Loot" means they could loot a rat and get a boss' loot.
+Talk:
+Use:
+
+
+2020
+----
+New Life Festival 2020/12/17-2021/1/5
+    Talk: Breda
+
+Undaunted Celebration 2020/12/3-2020/12/15
+	Search: Any group dungeon final boss
+
+Witches Festival 2020/10/22-2020/11/3
+    Search: delve bosses, dungeon bosses, World Bosses, and dolmen(-like) bosses
+    
+Lost Treasures of Skyrim September 23 — October 5, 2020
+    Western Skyrim trial quest
+        Talk: Thane Ogvar
+    Western Skyrim dailies
+        Talk: Tinzen
+        Talk: Hidaver
+        Talk: Swordthane Jylta
+
+Imperial City Celebration 2020/9/3-2020/9/15
+	Search: 57 Imperial City bosses (31 Coldharbor Elite Guard, 12 Sewer champions, 12 Patrolling Horrors, 1 boss White-Gold Tower, 1 boss Imperial City Prison)
+
+Summerset Celebration Event 2020/7/23-2020/8/4
+    Summerset Daily Quest
+        Talk: Justiciar Tanorian
+        Talk: Justiciar Farowel
+        Talk: Battlereeve Tanerline
+    Cloudrest weekly trial quest
+        Talk: Olorime
+
+Midyear Mayhem II 2020/6/25-2020/7/8
+    Battlegrounds quests from Battlemaster Rivyn
+        Talk: Battlemaster Rivyn 
+    Scouting, Battle, Warfront, and Conquest Missions [cyrodiil job boards]
+        Examine: Scouting Mission Board
+        Examine: Bounty Mission Board (maybe not?)
+        Examine: Warfront Mission Board
+        Examine: Battle Mission Board
+        Examine: Conquest Mission Board
+    Elder Scroll capture and recapture quests
+        Talk: Grand Warlord Sorcalin (Aldmeri Dominion)
+        Talk: Grand Warlord Dortene (Daggerfall Covenant)
+        Talk: Grand Warlord Zimmeron (Ebonheart Pact)
+    Town quests in Vlastarus,
+        Talk: Nelerien
+        Talk: Jurana
+        Talk: Paints-the-Sky (adventurer quest, but not a daily)
+        Talk: Talmo (adventurer quest, but not a daily)
+    ...Bruma,
+        Talk: Hjorik
+        Talk: Grigerda
+    ...Cropsford,
+        Talk: Ufgra gra-Gum
+        Talk: Prefect Antias
+        Talk: Aemilia (adventurer quest, but not a daily)
+    ...Cheydinhal,
+        Talk: Vyctoria Girien
+        Talk: Sylvian Herius
+    ...and Chorrol.
+        Talk: Lliae the Quick
+    Imperial City district dailies
+        Talk: Quintia Rullus
+        Talk: Loncano
+        Talk: Valga Atrius
+        Talk: Sister J'Reeza
+        Talk: Legate Gallus
+        Talk: Brihana
+
+Anniversary Jubilee 2020/4/2-2020/4/14
+    Use: Jubilee Cake 2020
+    Search: Any boss ("Delve, World, Dungeon, etc.")
+    
+Jester's Festival 2020/3/26-2020/4/2
+    Talk: Jester Queen Ayrenn
+    Talk: Jester King Emeric
+    Talk: Jester King Jorunn
+
+Murkmire Celebration 2020/2/20-2020/3/3
+	Search: Any kill in Murkmire
+
+Midyear Mayhem 2020/1/23-2020/2/4:
+    Battlegrounds quests from Battlemaster Rivyn
+        Talk: Battlemaster Rivyn 
+    Scouting, Battle, Warfront, and Conquest Missions [cyrodiil job boards]
+        Examine: Scouting Mission Board
+        Examine: Bounty Mission Board (maybe not?)
+        Examine: Warfront Mission Board
+        Examine: Battle Mission Board
+        Examine: Conquest Mission Board
+    Elder Scroll capture and recapture quests
+        Talk: Grand Warlord Sorcalin (Aldmeri Dominion)
+        Talk: Grand Warlord Dortene (Daggerfall Covenant)
+        Talk: Grand Warlord Zimmeron (Ebonheart Pact)
+    Town quests in Vlastarus,
+        Talk: Nelerien
+        Talk: Jurana
+        Talk: Paints-the-Sky (adventurer quest, but not a daily)
+        Talk: Talmo (adventurer quest, but not a daily)
+    ...Bruma,
+        Talk: Hjorik
+        Talk: Grigerda
+    ...Cropsford,
+        Talk: Ufgra gra-Gum
+        Talk: Prefect Antias
+        Talk: Aemilia (adventurer quest, but not a daily)
+    ...Cheydinhal,
+        Talk: Vyctoria Girien
+        Talk: Sylvian Herius
+    ...and Chorrol.
+        Talk: Lliae the Quick
+    Imperial City district dailies
+        Talk: Quintia Rullus
+        Talk: Loncano
+        Talk: Valga Atrius
+        Talk: Sister J'Reeza
+        Talk: Legate Gallus
+        Talk: Brihana
+
+2019
+----
+New Life Festival 2019/12/19-2020/1/2
+    Talk: Breda
+    Search: Any boss (because Undaunted event postponed) 
+
+Dawn of the Dragonguard 2019/11/26-2019/12/9
+    Search: Any dragons in Northern Elsweyr, Southern Elsweyr, Scalebreaker or Dragonhold
+
+Undaunted Celebration 2019/11/14-2019/11/18
+	Search: Any group dungeon final boss
+
+Witches Festival 2019/10/22-2019/11/11
+    Search: delve bosses, dungeon bosses, World Bosses, and dolmen(-like) bosses
+    
+Dragon Rise 2019/10/3-2019/10-14
+	Search: Any kill in Northern Elseweyr
+
+Imperial City Celebration 2019/9/5-2019/9/16
+	Search: 57 Imperial City bosses (31 Coldharbor Elite Guard, 12 Sewer champions, 12 Patrolling Horrors, 1 boss White-Gold Tower, 1 boss Imperial City Prison)
+    
+Orsinium Celebration Event 2019/8/8-2019/8/19
+    Delve Dailies
+        Talk: Guruzug
+    Group Boss Dailies
+        Talk: Arzorag
+        
+Thieves Guild and Dark Brotherhood Celebration July 2019/7/2-2019/7/15
+    Sacrament
+        Talk: Speaker Terenus
+    Heist
+        Talk: Fa'ren-dar
+        
+Anniversary Jubilee 2019/4/2-2019/5/9
+    Use: Jubilee Cake 2019
+
+Jester's Festival 2019/3/21-2019/4/2
+    Talk: Jester Queen Ayrenn
+    Talk: Jester King Emeric
+    Talk: Jester King Jorunn
+
+Thieves Guild and Dark Brotherhood Celebration March 2019/3/1-2019/3/12
+    Sacrament
+        Talk: Speaker Terenus
+    Heist
+        Talk: Fa'ren-dar
+
+Morrowind Celebration 2019/2/7-2019/2/18
+    Talk: Any world delve daily, any world boss daily.
+
+Midyear Mayhem 2019/1/10-2019/1/21
+    Battleground quests from Battlemaster Rivyn
+        Talk: Battlemaster Rivyn
+    Scouting, Bounty, Battle, Warfront, and Conquest Missions:
+        Examine: Scouting Mission Board
+        Examine: Bounty Mission Board
+        Examine: Warfront Mission Board
+        Examine: Battle Mission Board
+        Examine: Conquest Mission Board
+    Elder Scroll capture and recapture quests
+        Talk: Grand Warlord Sorcalin (Aldmeri Dominion)
+        Talk: Grand Warlord Dortene (Daggerfall Covenant)
+        Talk: Grand Warlord Zimmeron (Ebonheart Pact)
+    Town quests in Vlastarus,
+        Talk: Nelerien
+        Talk: Jurana
+        Talk: Paints-the-Sky (adventurer quest, but not a daily)
+        Talk: Talmo (adventurer quest, but not a daily)
+    ...Bruma,
+        Talk: Hjorik
+        Talk: Grigerda
+    ...Cropsford,
+        Talk: Ufgra gra-Gum
+        Talk: Prefect Antias
+        Talk: Aemilia (adventurer quest, but not a daily)
+    ...Cheydinhal,
+        Talk: Vyctoria Girien
+        Talk: Sylvian Herius
+    ...and Chorrol.
+        Talk: Lliae the Quick
+        
+2018
+----
+New Life Festival 2018/12/13-2019/1/2 (4th ticket event)
+    Talk: Breda
+
+Undaunted Celebration 2019/11/29-2019/12/5 (3rd ticket event)
+	Search: Any group dungeon final boss
+
+Clockwork City Celebration 2018/11/15-2018/11/26  (2nd ticket event)
+    Group Boss daily quests in Clockwork City
+        Talk: Clockwork Facilitator
+
+Witches Festival 2018/10/20-2018-11/1 (1st ticket event)
+    Search: delve bosses, dungeon bosses, World Bosses, and dolmen bosses

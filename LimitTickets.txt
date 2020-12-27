@@ -1,0 +1,8 @@
+## Title: LimitTickets
+## APIVersion: 100033
+## SavedVariables: LimitTickets_SavedVars
+## Version 1.3.0
+## DependsOn: LibAddonMenu-2.0>=28
+
+LimitTickets.lua
+LimitTickets.xml

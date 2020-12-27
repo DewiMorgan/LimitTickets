@@ -1,0 +1,32 @@
+Helpful coding notes and Addon dev principles
+=============================================
+
+Tips
+----
+IMPORTANT: Ignore updates to your addon in Minion!
+d() is debug command in yellow text.
+d(dump(SOME_TABLE)) is a method I stole from the interwebs to dump data.
+CHAT_SYSTEM:AddMessage(<message String>) is for prettier stuff. I've wrapped this with tt() and dd(), below.
+
+
+Principles
+----------
+* Have I18N
+* Declare all dependencies
+* Use ZOS constants wherever possible
+* Avoid LibStub
+* Avoid embedding shared libs
+* Either use LibAddonMenu or at least put settings under Settings/Addons
+* Avoid compulsory bound keys
+* Avoid creating gobals
+* Don't overwrite globals, especially constants! (or global styles!)
+* Gamepad mode compatibility?
+* Graceful crash-handling?
+* "use hooks on the class def if possible, or on the object when you do not have access to the class def" - ???
+* Don't undo your hooks ("when you hook the instance with the intention to undo the hook later,
+  you have to be careful how you do that, since the class works with metatables. when you simply set
+  the original function on the table, you'll actually prevent hooks on the class itself from working")
+* Ensure replaced API fns will still work if ZOS adds more params/return values in the future. So use (...) as the params.
+* Use ZO_ hooking fns where possible: https://github.com/esoui/esoui/blob/a34599f2cba93196976512d71f3b850cc9975ed9/esoui/libraries/utility/zo_hook.lua
+* All hooks should fail gracefully! Not break anything if they fail.
+* Don't depend on libs that change the UI, eg libslashcommander 
