@@ -10,7 +10,7 @@ This changelog is a summary: fir a more detailled breakdown, see https://github.
 * DONE: FIX: Don't trigger crouching for assistants if crouch for everyone is on. Thanks to danbest82 for reporting.
 * DONE: FIX: If not explicitly marked for crouching, assistants should be usable without crouching.
 * DONE: FIX: I found some pickpocketable NPCs who could be Talked to, so reinstated the warning tooltip.
-* DONE: Code Cleanup: Create GitHub repo (https://github.com/DewiMorgan/LimitTickets).
+* DONE: Code Cleanup: Create GitHub repo (https://github.com/DewiMorgan/LimitTickets) and set up project.
 * DONE: Code Cleanup: Configure IntelliJ IDE for easier development.
 * DONE: Code Cleanup: Remove repetition in settings by writing a checkbox wrapper.
 * DONE: Code Cleanup: Move ToDo/Done comments into changelog file.
