@@ -1,5 +1,6 @@
 Changelog
 =========
+This changelog is a summary: fir a more detailled breakdown, see https://github.com/DewiMorgan/LimitTickets/CHANGELOG.md
 
 1.2.0
 -----
@@ -17,6 +18,7 @@ Changelog
 * DONE: Code cleanup: Hook FishingManager (the parent class) rather than FISHING_MANAGER (the instance) unless the latter is already hooked.
 * DONE: Code cleanup: Put a desc in the required addons area.
 * DONE: Code Cleanup: Remove tt() method.
+* DONE: Code Cleanup: Create Github repo: https://github.com/DewiMorgan/LimitTickets
 * NAH: Code Cleanup: "If other addons interfere, try to add those addons to you addon's txt file, at the `## OptionalDependsOn: DolgubonsLazyWritCrafter NoAccidentalStealing`
   This way their `event_add_on_loaded` will trigger before your addon, hopfully also applying their hooks before yours." - Baertram (Not needed in this case, but good to know for future!)
 * NAH: Code Cleanup: Remove most debugging notices.
@@ -79,9 +81,10 @@ Future
 * ToDo: Feature: Find out what gamepad compatibility might entail.
 * ToDo: Feature: Check if you autoloot tickets from corpses even with autoloot off. If not: Option to turn off autoloot for corpses if at ticket limit? Nah, I think you get the tickets ANYWAY. See CraftAutoLoot addon for similar features.
 * Ongoing: Maintain lists of known-safe and known-unsafe containers.
-* ToDo: Add NoInteract as a related addon.
 * ToDo: Murdered corpses are still "Steal", not shown as a crime on the reticle, but is a crime to loot. See if they're different somehow.
 * ToDo: Feature: confirm social interaction. Or maybe if you hold the "interact" key it pops up saying "are you really sure you want to interact with this person and challenge them to a duel/invite them to a group/beg them to be your friend/whatever?"
+* ToDo: Optionally do/don't block talking to certain groups (vendors, assistants, houseguests, quest-givers, etc)?
+* ToDo: Disable ticket checks in player housing.
 
 Other Stuff
 -----------
