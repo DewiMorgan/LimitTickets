@@ -2,6 +2,10 @@ Changelog
 =========
 This changelog is a summary: fir a more detailled breakdown, see https://github.com/DewiMorgan/LimitTickets/CHANGELOG.md
 
+1.2.1
+-----
+* DONE: FIX: remove nil debug messages when toggling checkboxes.
+
 1.2.0
 -----
 * DONE: Feature: Create better list of known-safe containers. Now I've checked through all events, too, it's non-beta and quite good: defaulted on.
