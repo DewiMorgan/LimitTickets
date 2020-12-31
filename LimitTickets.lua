@@ -71,11 +71,13 @@ local probablySafeContainerLookup = {
     ["Heavy Sack"]     = true,
     ["Jewelry Box"]    = true,
     ["Keg"]            = true,
+    ["Loose Tile"]     = true,
     ["Melon Basket"]   = true,
     ["Millet Basket"]  = true,
     ["Nightstand"]     = true,
     ["Pumpkin Basket"] = true,
     ["Rack"]           = true,
+    ["Rubble"]         = true,
     ["Sack"]           = true,
     ["Saltrice Sack"]  = true,
     ["Seasoning Sack"] = true,
@@ -357,10 +359,8 @@ local function addCheckbox(propertyName, text, tooltip)
             if value then
                 LimitTickets.SavedVars[propertyName] = value
                 chatText("'<<1>>' set <<2>>.", text, GetString(SI_CHECK_BUTTON_ON))
-d(outString)
             else
                 chatText("'<<1>>' set <<2>>.", text, GetString(SI_CHECK_BUTTON_OFF))
-d(outString)
                 LimitTickets.SavedVars[propertyName] = value
             end
         end,

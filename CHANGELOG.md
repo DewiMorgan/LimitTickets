@@ -19,7 +19,6 @@ This changelog is a summary: fir a more detailled breakdown, see https://github.
 * DONE: Code cleanup: Hook FishingManager (the parent class) rather than FISHING_MANAGER (the instance) unless the latter is already hooked.
 * DONE: Code cleanup: Put a desc in the required addons area.
 * DONE: Code Cleanup: Remove tt() method.
-* DONE: Code Cleanup: Create Github repo: https://github.com/DewiMorgan/LimitTickets
 * NAH: Code Cleanup: "If other addons interfere, try to add those addons to you addon's txt file, at the `## OptionalDependsOn: DolgubonsLazyWritCrafter NoAccidentalStealing`
   This way their `event_add_on_loaded` will trigger before your addon, hopfully also applying their hooks before yours." - Baertram (Not needed in this case, but good to know for future!)
 * NAH: Code Cleanup: Remove most debugging notices.
