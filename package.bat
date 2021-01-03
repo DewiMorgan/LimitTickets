@@ -4,7 +4,7 @@
 setlocal enableextensions enabledelayedexpansion
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
-:: variables: You can adjust the script here
+:: Variables: You can adjust the script here
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
 :: Set URL of website to anything but "" to open the page after packaging is complete
 SET ESOUI_URL="https://www.esoui.com/downloads/editfile.php?id=2872"
@@ -17,7 +17,7 @@ SET TARGET_DIRECTORY="D:\data\Dropbox\Coding\EsoAddonZips\"
 :: SET GITHUB_BRANCH=""
 SET GITHUB_BRANCH="main"
 
-SET DELETE_CUSTOM_FILENAME="Custom.lua"
+SET DELETE_CUSTOM_FILENAME=""
 
 REM set ZIP="%ProgramFiles%\7-Zip\7z.exe"
 set ZIP="D:\Program Files\7-Zip\7z.exe"
@@ -42,7 +42,7 @@ for /F "tokens=3" %%i in ('findstr /C:"## Version:" %name%.txt') do set version=
 :: Throw it on git.
 IF NOT %GITHUB_BRANCH% == "" (
 	echo * Pushing to github branch %GITHUB_BRANCH% with commit message %version%...
-	git commit -am "%version%"
+	git commit -am "%version%: Auto-packager"
 	:: Strip ""s 
 	git push origin %GITHUB_BRANCH:"=%
 )
