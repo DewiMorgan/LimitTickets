@@ -17,7 +17,7 @@ SET TARGET_DIRECTORY="D:\data\Dropbox\Coding\EsoAddonZips\"
 :: SET GITHUB_BRANCH=""
 SET GITHUB_BRANCH="main"
 
-SET DELETE_CUSTOM_FILENAME=""
+SET DELETE_CUSTOM_FILENAME=
 
 REM set ZIP="%ProgramFiles%\7-Zip\7z.exe"
 set ZIP="D:\Program Files\7-Zip\7z.exe"
