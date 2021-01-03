@@ -3,10 +3,10 @@
 ## APIVersion: 100033
 ## AddOnVersion: 102010
 ## Version:      1.2.1
-## DependsOn: LibAddonMenu-2.0>=28
 ## IsLibrary: false
 ## SavedVariables: LimitTickets_SavedVars
 ## Description: This addon causes actions with potentially annoying effects (such as getting too many tickets) to warn you and/or require you to crouch before doing them.
+## DependsOn: LibAddonMenu-2.0>=28
 
 LimitTickets.lua
 LimitTickets.xml

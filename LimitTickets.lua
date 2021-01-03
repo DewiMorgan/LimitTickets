@@ -12,17 +12,17 @@ LimitTickets.displayName = "Limit Tickets"
 LimitTickets.author = "Dewi Morgan @Farrier"
 LimitTickets.shortName = "LT" -- Not guaranteed unique, but OK for tagging messages, etc.
 LimitTickets.version = "1.2.1"
-LimitTickets.description = "This addon causes actions with potentially annoying effects (such as getting too many tickets) to warn you and/or require you to crouch before doing them."
+LimitTickets.description = "Causes actions with annoying effects (like getting too many tickets) to warn you and/or require you to crouch before doing them."
 
 LimitTickets.SavedVarsVersion = "1" -- If this changes, older saved vars are WIPED.
 LimitTickets.SavedVars = {} -- The actual real data.
 
---local DEBUG = false
---local function dx(...)
---    if DEBUG then
---        d(...)
---    end
---end
+local DEBUG = true
+local function dx(...)
+    if DEBUG then
+        d(...)
+    end
+end
 
 local lamOptions = {} -- The LibAddonMenu options page.
 
@@ -33,11 +33,11 @@ local defaultSavedVars = { -- Will be created in save file if not found, but won
     alertMessages = true,
     reticleMessages = true,
     ticketWarningsOnly = false,
-    crouchAssistants = true,
-    crouchContainers = true,
     crouchNpc = true,
+    crouchAssistants = true, -- aka "crouchAllContainers"
     crouchAllNpc = false,
-    ignoreSafeContainers = true,
+    crouchContainers = true, -- aka "crouchAllContainers"
+    ignoreSafeContainers = true, -- aka "crouchAllCorpses"
     -- Non-settings, just stored data.
     currentTickets = nil,
 }
@@ -65,6 +65,7 @@ local probablySafeContainerLookup = {
     ["Desk"]           = true,
     ["Drawers"]        = true,
     ["Dresser"]        = true,
+    ["Fish"]           = true, -- Searchable fish rack, eg at Philosopher's Cradle crafting area in Blackreach.
     ["Flour Sack"]     = true,
     ["Greens Basket"]  = true,
     ["Heavy Crate"]    = true,
@@ -96,6 +97,7 @@ local assistantLookup = {
 local impresarioLookup = {
     ["The Impresario"] = true,
 }
+
 
 -- Uses GetString() constants, so I18N'd. Unrecognized values will be Nil!
 local actionNameToEnglishLookup = {
@@ -194,7 +196,7 @@ local function getTickets()
     return LimitTickets.SavedVars.currentTickets
 end
 
--- Let them know whether they can use an item, and why.
+-- Let them know whether they can use an item, and if so, why.
 -- Modified reticle hook from No, Thank You!, via No Interact.
 local function ModifyReticle_Hook(interactionPossible)
 	if interactionPossible then
@@ -236,20 +238,18 @@ local function ModifyReticle_Hook(interactionPossible)
             else
             	setReticleText(false, npcFormat, cannotTalk)
             end
-	    elseif isTalkAction and atMaxTickets and LimitTickets.SavedVars.crouchNpc then
+	    elseif isTalkAction and atMaxTickets then
 			if isImpresario(itemName) then
             	setReticleText(true, ticketFormat, alwaysTalk)
-	        elseif LimitTickets.SavedVars.ticketWarningsOnly then
-            	setReticleText(false, ticketFormat, beCareful)
         	elseif isCrouched() then
             	setReticleText(true, ticketFormat, okToTalk)
 	        else
-            	setReticleText(false, ticketFormat, cannotTalk)
+            	setReticleText(false, ticketFormat, beCareful)
 	        end
         elseif isSearchAction and isEmptyContainer then
             -- An empty container, ignore.
         	hideReticleInfo(true)
-        elseif isSearchAction and LimitTickets.SavedVars.ignoreSafeContainers and isProbablySafeContainer(itemName) then
+        elseif isSearchAction and LimitTickets.SavedVars.ignoreSafeContainers and not isProbablySafeContainer(itemName) then
             -- A safe container, ignore.
         	hideReticleInfo(true)
 	    elseif isSearchAction and atMaxTickets and LimitTickets.SavedVars.crouchContainers then
@@ -298,16 +298,15 @@ local function StartInteraction_hook(...)
             chatText("Ignoring all talkable NPCs: crouch to enable talking to <<C:1>>.", itemName)
     		return true -- Disable interaction.
         end
-    elseif isTalkAction and atMaxTickets and LimitTickets.SavedVars.crouchNpc then
+    elseif isTalkAction and atMaxTickets then
 		if isImpresario(itemName) then
-            -- chatText("Talking to the Impresario herself!")
+            -- Don't need anything special for her.
         elseif LimitTickets.SavedVars.ticketWarningsOnly then
-            chatText("At <<1>> tickets, but warnings only, so talking to <<C:2>>." , ticketString, itemName)
+            chatText("At <<1>> tickets, but 'warnings only' set: can accept quests and rewards.", ticketString, itemName)
     	elseif isCrouched() then
-            chatText("At <<1>> tickets, but crouched, so talking to <<C:2>>.", ticketString, itemName)
+            chatText("At <<1>> tickets, but crouched: can accept quests and rewards.", ticketString, itemName)
         else
-    		chatError("Too many tickets (<<1>>): crouch to enable talking.", ticketString)
-    		return true -- Disable interaction.
+    		chatError("At <<1>> tickets: crouch to accept quests and rewards.", ticketString)
         end
     elseif isSearchAction and isEmptyContainer then
         chatText("Fruitlessly searching the empty <<1>>.", itemName)
@@ -327,8 +326,96 @@ local function StartInteraction_hook(...)
     return originalStartInteraction(...) -- Permit the activity.
 end
 
+
+local NeedToChangeGoodbye
+local LastQuestRewarded
+
+-- When any conversation begins, we set this false.
+local function OnChatterBegin(eventCode, chatterOptionCount) -- number, number
+    NeedToChangeGoodbye = false
+    LastQuestRewarded = nil
+end
+
+local function ShowQuestRewards_Hook(_, journalQuestIndex) -- Number
+    LastQuestRewarded = journalQuestIndex
+    return false
+end
+
+-- When response options are added to a conversation, check to see if they give
+-- quest rewards. Decline if too many tickets.
+
+local function PopulateChatterOption_Hook(self, controlID, optionIndex, optionText, optionType, optionalArg, isImportant, chosenBefore, importantOptions)
+    local needToBlockAccept = false
+    local optionControl
+    local playerTickets
+
+    -- Note, the following two lines exist already in ZOS' code, so I may be being redundant?
+    -- warn the player they aren't going to get their money when they hit complete
+    -- confirmError = self:TryGetMaxCurrencyWarningText(reward.rewardType, reward.amount)
+
+    -- Not much is gained with a blocklist. Spend your damn tickets!
+    -- local lootName = GetLootTargetInfo()
+    -- if isKnownTicketQuestGiver(zo_strformat("<<1>>", lootName)) then
+
+    -- This fn is called for every single conversation option, so trying to be lightweight for most of them.
+    if CHATTER_GOODBYE == optionType then
+        if NeedToChangeGoodbye then
+            NeedToChangeGoodbye = false
+            optionControl = self.optionControls[controlID]
+            if optionControl then
+                optionControl:SetText("I should spend some tickets, first.")
+                optionControl:SetColor(ZO_ERROR_COLOR:UnpackRGBA())
+            end
+        end
+        return -- exit early.
+    elseif CHATTER_GENERIC_ACCEPT == optionType then -- Accepting quest
+        playerTickets = getTickets()
+        if playerTickets >= LimitTickets.SavedVars.maxTickets then
+            needToBlockAccept = true
+        end
+    elseif CHATTER_COMPLETE_QUEST == optionType and LastQuestRewarded > 0 then -- Accepting quest reward
+        playerTickets = getTickets()
+        if playerTickets >= LimitTickets.SavedVars.maxTickets then
+            local numRewards = GetJournalQuestNumRewards(LastQuestRewarded)
+            for i = 1, numRewards do
+                local rewardType = GetJournalQuestRewardInfo(LastQuestRewarded, i)
+                if REWARD_TYPE_EVENT_TICKETS == rewardType then
+                    chatText("Event Tickets being offered!")
+                    needToBlockAccept = true
+                end
+            end
+        end
+    end
+
+    -- Block if we decided we needed to.
+    if needToBlockAccept then
+        optionControl = self.optionControls[controlID]
+        if optionControl then
+            -- Disable accepting the quest ro reward.
+            local warningString = ""
+            if (LimitTickets.SavedVars.crouchNpc and isCrouched()) or LimitTickets.SavedVars.ticketWarningsOnly then
+                chatText("Warning given.")
+                warningString = "[Careful: %d/%d tickets!]: %s"
+                optionControl:SetColor(ZO_ERROR_COLOR:UnpackRGBA())
+            else
+                chatText("Acceptance blocked.")
+                warningString = "[Blocked: %d/%d tickets!]: %s"
+                optionControl:SetColor(ZO_DISABLED_TEXT:UnpackRGBA())
+                GetControl(optionControl, "IconImage"):SetDesaturation(1)
+                optionControl.enabled = false
+            end
+            optionControl:SetText(string.format(warningString,
+                ZO_LocalizeDecimalNumber(playerTickets),
+                ZO_LocalizeDecimalNumber(LimitTickets.SavedVars.maxTickets),
+                optionText
+            ))
+            NeedToChangeGoodbye = true
+        end
+    end
+end
+
 -- Hook when the player gets new tickets.
-local function LimitTickets_CurrencyUpdate(_, currencyType, _, newAmount, oldAmount, _)
+local function OnCurrencyUpdate(_, currencyType, _, newAmount, oldAmount, _)
     -- On zoning, reloadui, and character load, you get a currencyUpdate event from zero to your current amount.
     -- We want to ignore this, so we check against our saved value.
     if CURT_EVENT_TICKETS == currencyType and (0 ~= oldAmount or newAmount ~= LimitTickets.SavedVars.currentTickets) then
@@ -336,7 +423,7 @@ local function LimitTickets_CurrencyUpdate(_, currencyType, _, newAmount, oldAmo
         
         LimitTickets.SavedVars.currentTickets = newAmount
         if newAmount >= LimitTickets.SavedVars.maxTickets then
-            messageText = zo_strformat("You just reached your event ticket target! (<<1>>/<<2>>).", newAmount, LimitTickets.SavedVars.maxTickets)
+            messageText = zo_strformat("You just reached your event Ticket Limit! (<<1>>/<<2>>).", newAmount, LimitTickets.SavedVars.maxTickets)
             chatText(messageText)
         	zoAlertWrapper(messageText, newAmount, LimitTickets.SavedVars.maxTickets)
         else
@@ -378,7 +465,7 @@ local function addHeader(text)
 end
 
 -- Build the settings window form.
-local function LimitTickets_InitSettings()
+local function InitSettings()
 
     local panelData = {
         type = "panel",
@@ -400,35 +487,35 @@ local function LimitTickets_InitSettings()
     lamOptions[#lamOptions + 1] = {
         type = "description",
         title = nil,	--(optional)
-        text = "Setting a limit prevents going past the limit of 12 event tickets, and hence losing the extra tickets before you spend them.",
+        text = "The limit stops you exceeding the max 12 event tickets, so losing the extra tickets.",
     }
     
     lamOptions[#lamOptions + 1] = {
         type = "slider",
-        name = "Target tickets",
-        tooltip = "Target number of tickets at which to start warning: you can only have at most 12. Recommended: 10, or (13, minus the most tickets you can get with one action in the current event, usually 3).",
+        name = "Ticket limit",
+        tooltip = "Number of tickets before warning. Recommended: 10, or (13, minus the most tickets you can get with one action in the current event, usually 3). Choosing 13 effectively turns the warning off, as you can only ever have 12.",
         min = 0,
         max = 13,
         getFunc = function() return LimitTickets.SavedVars.maxTickets end,
         setFunc = function(value)
             LimitTickets.SavedVars.maxTickets = value
-            chatText("Ticket target set to: <<1>>.", value)
+            chatText("Ticket limit set to: <<1>>.", value)
         end,
         default = defaultSavedVars.maxTickets,
     }
 
     addHeader("Output options")
-    addCheckbox("reticleMessages",      "Warnings by the '[E] Use' Reticle note",  "Changes the '[E] Talk' reticle message to say you need to crouch (strongly recommended unless taking screenshots, etc!).")
-    addCheckbox("alertMessages",        "Notice at Top-right when ticket balance changes",  "Sends one of those alerts to the top-right of your screen when your number of tickets changes, or you hit your target.")
+    addCheckbox("reticleMessages",      "Warnings by the '[E] Use' reticle note",  "Changes the '[E]' reticle message to warn about tickets (strongly recommended unless taking screenshots, etc!).")
+    addCheckbox("alertMessages",        "Notice at Top-right when ticket balance changes",  "Sends an alert to the top-right of your screen when your number of tickets changes, or you hit your limit.")
     addCheckbox("debugMessages",        "Messages in chat window",  "Messages to your chat window to let you know why you can't use stuff. Mostly for debugging.")
 
-    addHeader("Behavior once the ticket limit is reached")
-    addCheckbox("crouchNpc",            "Block talking to NPCs if hit target",  "Warn when trying to talk to any NPC once you hit your ticket target, so you don't get more tickets. Doesn't affect assistants, as they don't give you tickets.")
-    addCheckbox("crouchContainers",     "Block looting if hit target",  "When trying to loot any container once you hit your ticket target, so you don't get more tickets.")
-    addCheckbox("ignoreSafeContainers", "Ignore probably-safe containers",  "Some containers, like apple baskets, backpacks, and barrels, have never yet given tickets, so should be safe to loot freely.")
+    addHeader("Behavior once your 'Ticket Limit' is reached")
+    addCheckbox("crouchNpc",            "Block quests/rewards from NPCs",  "Once you hit your ticket limit, prevent selecting conversation options that would give you a quest, or tickets.")
     addCheckbox("ticketWarningsOnly",   "Warnings only, don't block actions", "If this is on, you won't need to crouch to search/talk, but you'll still see any enabled messages in the reticle, alerts, and/or chat window.")
  
     addHeader("Constant Behavior")
+    addCheckbox("crouchContainers",     "Crouch to 'Search' containers.",  "Only those containers where the action is 'Search': barrels, etc.")
+    addCheckbox("ignoreSafeContainers", "Crouch to loot bodies.",  "Possibly useful for murdered people, but doesn't check you're hidden, only crouched.")
     addCheckbox("crouchAssistants",     "Crouch to use assistants",  "Ignore assistants unless crouched, for when group mates forget to put them away.")
     addCheckbox("crouchAllNpc",         "Crouch to talk to all NPCs, except assistants",  "Require crouching to talk to NPCs: handy while grinding writs, etc. Pickpocketable NPCs won't be talkable!")
 
@@ -439,40 +526,34 @@ end
 
 -- Initialize on ADD_ON_LOADED Event
 -- Register for other events. Must be below the fns that are registered for the events.
-local function LimitTickets_Initialize(_, addOnName)
+local function OnAddOnLoaded(_, addOnName)
 	if (addOnName == LimitTickets.name) then
 	    -- set up the various callbacks.
 		EVENT_MANAGER:UnregisterForEvent(string.format("%s_%s", LimitTickets.name, "ADDON_LOADED"), EVENT_ADD_ON_LOADED)
-        EVENT_MANAGER:RegisterForEvent(string.format("%s_%s", LimitTickets.name, "CURRENCY_UPDATE"), EVENT_CURRENCY_UPDATE, LimitTickets_CurrencyUpdate)
-
-        -- Hooks. For our code to be an excessively good citizen, we try to modify the (local/private) class definitions,
-        -- but *ONLY IF* it's absolutely safe to do so: otherwise we hook the instance, because someone else already has.
-        -- This is certainly overkill, but doesn't hurt anything.
+        EVENT_MANAGER:RegisterForEvent(string.format("%s_%s", LimitTickets.name, "CURRENCY_UPDATE"), EVENT_CURRENCY_UPDATE, OnCurrencyUpdate)
+        EVENT_MANAGER:RegisterForEvent(string.format("a%s_%s", LimitTickets.name, "EVENT_CHATTER_BEGIN"), EVENT_CHATTER_BEGIN, OnChatterBegin)
 
         -- Prehook for the reticle display.
-        if RETICLE.TryHandlingInteraction == RETICLE.__index.TryHandlingInteraction then
-        	ZO_PreHook(RETICLE.__index, "TryHandlingInteraction", ModifyReticle_Hook)
-        else
-        	ZO_PreHook(RETICLE, "TryHandlingInteraction", ModifyReticle_Hook)
-        end
+        ZO_PreHook(RETICLE, "TryHandlingInteraction", ModifyReticle_Hook)
+        -- PreHook to get quest id.
+        -- This could have been an event handler, but we want to guarantee running before PopulateChatterOption_Hook
+        ZO_PreHook(INTERACTION, "ShowQuestRewards", ShowQuestRewards_Hook)
 
         -- Around-hook for the interaction response. Can't use ZO_*Hook methods, because we're changing the return value.
-        if FISHING_MANAGER.StartInteraction == FISHING_MANAGER.__index.StartInteraction then
-            originalStartInteraction = FISHING_MANAGER.__index.StartInteraction
-            FISHING_MANAGER.__index.StartInteraction = StartInteraction_hook
-        else
-            originalStartInteraction = FISHING_MANAGER.StartInteraction
-            FISHING_MANAGER.StartInteraction = StartInteraction_hook
-        end
+        originalStartInteraction = FISHING_MANAGER.StartInteraction
+        FISHING_MANAGER.StartInteraction = StartInteraction_hook
+
+        -- Posthook for quest-giver conversations.
+        ZO_PostHook(INTERACTION, "PopulateChatterOption", PopulateChatterOption_Hook)
 
     	-- Set up our settings menu and saved var persistence.
     	-- Nil param here is optional string namespace to separate from other saved things within "LimitTickets_SavedVars".
         LimitTickets.SavedVars = ZO_SavedVars:NewAccountWide("LimitTickets_SavedVars", LimitTickets.SavedVarsVersion, nil, defaultSavedVars)
-		LimitTickets_InitSettings()
+		InitSettings()
 		
 		-- Place our reticle label.
         reticleInfoLabel:SetAnchor(TOPLEFT, ZO_ReticleContainerInteractKeybindButton, BOTTOMLEFT, 0, 0)
 	end
 end
 
-EVENT_MANAGER:RegisterForEvent(string.format("%s_%s", LimitTickets.name, "ADDON_LOADED"), EVENT_ADD_ON_LOADED, LimitTickets_Initialize)
+EVENT_MANAGER:RegisterForEvent(string.format("%s_%s", LimitTickets.name, "ADDON_LOADED"), EVENT_ADD_ON_LOADED, OnAddOnLoaded)

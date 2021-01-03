@@ -19,16 +19,18 @@ SET GITHUB_BRANCH="main"
 
 SET DELETE_CUSTOM_FILENAME="Custom.lua"
 
+REM set ZIP="%ProgramFiles%\7-Zip\7z.exe"
+set ZIP="D:\Program Files\7-Zip\7z.exe"
+
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 :: Check for existence of 7zip.
-REM set zip="%ProgramFiles%\7-Zip\7z.exe"
-set zip="D:\Program Files\7-Zip\7z.exe"
-if not exist %zip% goto :zipnotfound
+if not exist %ZIP% goto :zipnotfound
 
-:: Read addon name from manifest.txt.
+:: Get addon name from the current folder name (a special side effect of 'for')
 for %%* in (.) do set name=%%~nx*
 
+:: Verify name by the existence of a .txt file manifest.
 if not exist %name%.txt (
   echo * Please enter the name of your add-on:
   set /P name=^>
@@ -57,6 +59,7 @@ for /F %%i in ('findstr /B /R "[^#;]" %name%.txt') do (
   set files=!files! !file:$^(language^)=*!
 )
 
+for /F %i in ('findstr /B /R "[^#;]" LimitTickets.txt') do ( set file=%~nxi &  set files=!files! !file:$^(language^)=*! )
 :: Read additional files (assets etc.) from package.manifest.
 if exist package.manifest (
   for /F "tokens=*" %%i in (package.manifest) do (
@@ -67,13 +70,12 @@ if exist package.manifest (
 :: Copy everything to assembly folder.
 robocopy . .package\%name% %files% /S /XD .* /NJH /NJS /NFL /NDL > nul
 
-
 :: Zip it.
 pushd .package 
 if not "%DELETE_CUSTOM_FILENAME%" == "" (
 	del /S "%DELETE_CUSTOM_FILENAME%"
 )
-%zip% a -tzip -bd ..\%archive% %name% > nul
+%ZIP% a -tzip -bd ..\%archive% %name% > nul
 popd
 
 rd /S /Q .package
