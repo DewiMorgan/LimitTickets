@@ -76,7 +76,8 @@ pushd .package
 if not "%DELETE_CUSTOM_FILENAME%" == "" (
 	del /S "%DELETE_CUSTOM_FILENAME%"
 )
-%ZIP% a -tzip -bd ..\%archive% %name% > nul
+::%ZIP% a -tzip -bd ..\%archive% %name% > nul
+%ZIP% a -tzip ..\%archive% %name%
 popd
 
 rd /S /Q .package
