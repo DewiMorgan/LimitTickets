@@ -59,7 +59,6 @@ for /F %%i in ('findstr /B /R "[^#;]" %name%.txt') do (
   set files=!files! !file:$^(language^)=*!
 )
 
-for /F %i in ('findstr /B /R "[^#;]" LimitTickets.txt') do ( set file=%~nxi &  set files=!files! !file:$^(language^)=*! )
 :: Read additional files (assets etc.) from package.manifest.
 if exist package.manifest (
   for /F "tokens=*" %%i in (package.manifest) do (
