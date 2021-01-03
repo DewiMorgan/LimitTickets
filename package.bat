@@ -67,7 +67,9 @@ if exist package.manifest (
 )
 
 :: Copy everything to assembly folder.
-robocopy . .package\%name% %files% /S /XD .* /NJH /NJS /NFL /NDL > nul
+echo robocopy . .package\%name% %files% /S /XD .* /NJH /NJS /NFL /NDL > nul
+::robocopy . .package\%name% %files% /S /XD .* /NJH /NJS /NFL /NDL > nul
+robocopy . .package\%name% %files% /S /XD .*
 
 :: Zip it.
 pushd .package 

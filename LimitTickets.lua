@@ -11,7 +11,7 @@ LimitTickets.name = "LimitTickets"
 LimitTickets.displayName = "Limit Tickets"
 LimitTickets.author = "Dewi Morgan @Farrier"
 LimitTickets.shortName = "LT" -- Not guaranteed unique, but OK for tagging messages, etc.
-LimitTickets.version = "1.2.1"
+LimitTickets.version = "1.3.0"
 LimitTickets.description = "Causes actions with annoying effects (like getting too many tickets) to warn you and/or require you to crouch before doing them."
 
 LimitTickets.SavedVarsVersion = "1" -- If this changes, older saved vars are WIPED.
