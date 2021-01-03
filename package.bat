@@ -67,6 +67,7 @@ if exist package.manifest (
 )
 
 :: Copy everything to assembly folder.
+echo ** Copying.
 echo robocopy . .package\%name% %files% /S /XD .* /NJH /NJS /NFL /NDL > nul
 ::robocopy . .package\%name% %files% /S /XD .* /NJH /NJS /NFL /NDL > nul
 robocopy . .package\%name% %files% /S /XD .*
@@ -74,8 +75,10 @@ robocopy . .package\%name% %files% /S /XD .*
 :: Zip it.
 pushd .package 
 if not "%DELETE_CUSTOM_FILENAME%" == "" (
+    echo ** Clearing custom names.
 	del /S "%DELETE_CUSTOM_FILENAME%"
 )
+echo ** Zipping.
 ::%ZIP% a -tzip -bd ..\%archive% %name% > nul
 %ZIP% a -tzip ..\%archive% %name%
 popd
@@ -88,7 +91,7 @@ IF NOT %TARGET_DIRECTORY% == "" (
 )
 
 :: Open it in default browser.
-IF NOT %ESOUI_URL% == "" rundll32 url.dll,FileProtocolHandler %ESOUI_URL%
+::IF NOT %ESOUI_URL% == "" rundll32 url.dll,FileProtocolHandler %ESOUI_URL%
 
 echo * Done^^!
 echo.
