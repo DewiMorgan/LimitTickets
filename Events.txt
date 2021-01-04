@@ -1,20 +1,19 @@
 ﻿LOOTABLES
 =========
-#Mining (smithing and jewelry) platinum seam, Rubedite ore: Mine
+Mining (smithing and jewelry) platinum seam, Rubedite ore: Mine
 Cloth (fibrous plants) Torn Cloth, Ancestor Silk: Collect
 Wood (wood) Scrap Wood, Ruby ash wood: Cut
-#Rune (Runestones and Psijic portals) Runestone: Collect. Psijic portals: Loot
-#Mushroom (mushrooms) Namira's Rot, Violet Coprimus: Collect
-#Flower (Herbs/flowers) Columbine, Nightshade: Collect
-#Green Nirnroot (Water Herbs) Water Hyacinth, Nirnroot: Collect
-#Red Nirnroot (Crimson Nirnroot): Collect
-#Jar (solvents) Pure water, Water Skin: Collect
-#Clam (Giant Clams) Giant Clam: Use
-#chest (Chests) Chest: Unlock (Simple/...)
-#sack (Heavy Sacks) Heavy Sacks: Search
-#Purple thief icon (Thieves Troves) Thieves Trove: Steal from
-#White thief icon (Justice Containers) Safebox: Steal from
-Hidden Stashes
+Rune (Runestones and Psijic portals) Runestone: Collect. Psijic portals: Loot
+Mushroom (mushrooms) Namira's Rot, Violet Coprimus: Collect
+Flower (Herbs/flowers) Columbine, Nightshade: Collect
+Green Nirnroot (Water Herbs) Water Hyacinth, Nirnroot: Collect
+Red Nirnroot (Crimson Nirnroot): Collect
+Jar (solvents) Pure water, Water Skin: Collect
+Clam (Giant Clams) Giant Clam: Use
+chest (Chests) Chest: Unlock (Simple/...)
+Purple thief icon (Thieves Troves) Thieves Trove: Steal from
+White thief icon (Justice Containers) Safebox: Steal from
+sack (Heavy Sacks) Heavy Sacks: Search
 
 Events
 ======

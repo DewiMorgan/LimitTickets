@@ -34,10 +34,10 @@ local defaultSavedVars = { -- Will be created in save file if not found, but won
     reticleMessages = true,
     ticketWarningsOnly = false,
     crouchNpc = true,
-    crouchAssistants = true, -- aka "crouchAllContainers"
+    crouchAssistants = true, -- should probably be "crouchAllContainers", historical reasons.
     crouchAllNpc = false,
-    crouchContainers = true, -- aka "crouchAllContainers"
-    ignoreSafeContainers = true, -- aka "crouchAllCorpses"
+    crouchContainers = true, -- should probably be "crouchAllContainers", historical reasons.
+    ignoreSafeContainers = true, -- should probably be "crouchAllCorpses", historical reasons.
     -- Non-settings, just stored data.
     currentTickets = nil,
 }
@@ -59,6 +59,7 @@ local probablySafeContainerLookup = {
     ["Cabinet"]        = true,
     ["Cauldron"]       = true,
     ["Cupboard"]       = true,
+    ["Coffer"]         = true, -- Vivec Impresario tent.
     ["Corn Basket"]    = true,
     ["Crate"]          = true,
     ["Crates"]         = true,
@@ -83,6 +84,7 @@ local probablySafeContainerLookup = {
     ["Saltrice Sack"]  = true,
     ["Seasoning Sack"] = true,
     ["Tomato Crate"]   = true,
+    ["Tomb Urn"]       = true, -- eg Shroud Hearth Barrow in the Rift
     ["Trunk"]          = true,
     ["Urn"]            = true,
     ["Wardrobe"]       = true,
@@ -97,6 +99,17 @@ local assistantLookup = {
 local impresarioLookup = {
     ["The Impresario"] = true,
 }
+-- For this, I'd prefer a sensible way to programmatically say "this year's cake, not last year's, in any language", but...
+local isJubileeCakeLookup = {
+    ["Jubilee Cake 2020"] = true, -- obsolete, but used for testing.
+    ["Jubilee Cake 2021"] = true,
+    ["Jubilee Cake 2022"] = true,
+    ["Jubilee Cake 2023"] = true,
+    ["Jubilee Cake 2024"] = true,
+    ["Jubilee Cake 2025"] = true,
+    ["Jubilee Cake 2026"] = true,
+    ["Jubilee Cake 2027"] = true,
+}
 
 
 -- Uses GetString() constants, so I18N'd. Unrecognized values will be Nil!
@@ -106,7 +119,7 @@ local actionNameToEnglishLookup = {
     -- Commented unused items.
     -- [GetString(SI_GAMECAMERAACTIONTYPE3)] = "Harvest",
     -- [GetString(SI_GAMECAMERAACTIONTYPE4)] = "Disarm",
-    -- [GetString(SI_GAMECAMERAACTIONTYPE5)] = "Use",
+    [GetString(SI_GAMECAMERAACTIONTYPE5)] = "Use",
     -- [GetString(SI_GAMECAMERAACTIONTYPE6)] = "Read",
     -- [GetString(SI_GAMECAMERAACTIONTYPE7)] = "Take",
     -- [GetString(SI_GAMECAMERAACTIONTYPE8)] = "Destroy",
@@ -183,6 +196,13 @@ local function isProbablySafeContainer(name)
     return probablySafeContainerLookup[name]
 end
 
+local function isJubileeCake(name)
+    -- Probably Won't work with translation.
+    --cakename = "Jubilee Cake"
+    --return str:sub(1, #start) == start
+    return isJubileeCakeLookup[name]
+end
+
 -- Test whether the player is crouched.
 local function isCrouched()
     return GetUnitStealthState("player") ~= STEALTH_STATE_NONE
@@ -206,15 +226,19 @@ local function ModifyReticle_Hook(interactionPossible)
      	local atMaxTickets = playerTickets >= LimitTickets.SavedVars.maxTickets
      	local isTalkAction = "Talk" == actionNameToEnglishLookup[actionName]
  	    local isSearchAction = "Search" == actionNameToEnglishLookup[actionName]
+ 	    local isUseAction = "Use" == actionNameToEnglishLookup[actionName]
         local isEmptyContainer = ADDITIONAL_INTERACT_INFO_EMPTY == additionalInfo
         local ticketFormat = string.format(
-            "%s/%s tickets <<1>>",
+            "%s/%s tickets: <<1>>",
             ZO_LocalizeDecimalNumber(playerTickets),
             ZO_LocalizeDecimalNumber(LimitTickets.SavedVars.maxTickets)
         )
         local assistantFormat = "Assistant: <<1>>"
         local npcFormat =  "NPC: <<1>>"
+        local containerFormat =  "Container: <<1>>"
+        local corpseFormat =  "Corpse: <<1>>"
         local beCareful = "be careful!"
+        local cannotEat = "crouch to eat."
         local okToTalk = "crouched, can talk"
         local cannotTalk = "crouch to talk"
         local alwaysTalk = "can always talk"
@@ -223,11 +247,14 @@ local function ModifyReticle_Hook(interactionPossible)
 
         if not LimitTickets.SavedVars.reticleMessages then
         	hideReticleInfo(true)
-	    elseif isTalkAction and isAssistant(itemName) then
-            if not LimitTickets.SavedVars.crouchAssistants then
-            	hideReticleInfo(true)
-                -- Ignore assistants if we're not explicitly crouching for them.
-	        elseif isCrouched() then
+	    elseif isUseAction and atMaxTickets and isJubileeCake(itemName) then
+            if isCrouched() then
+            	setReticleText(true, ticketFormat, beCareful)
+	        else
+            	setReticleText(false, ticketFormat, cannotEat)
+	        end
+	    elseif isTalkAction and LimitTickets.SavedVars.crouchAssistants and isAssistant(itemName) then
+            if isCrouched() then
             	setReticleText(true, assistantFormat, okToTalk)
 	        else
             	setReticleText(false, assistantFormat, cannotTalk)
@@ -238,29 +265,30 @@ local function ModifyReticle_Hook(interactionPossible)
             else
             	setReticleText(false, npcFormat, cannotTalk)
             end
-	    elseif isTalkAction and atMaxTickets then
-			if isImpresario(itemName) then
-            	setReticleText(true, ticketFormat, alwaysTalk)
-        	elseif isCrouched() then
-            	setReticleText(true, ticketFormat, okToTalk)
-	        else
-            	setReticleText(false, ticketFormat, beCareful)
-	        end
         elseif isSearchAction and isEmptyContainer then
             -- An empty container, ignore.
         	hideReticleInfo(true)
         elseif isSearchAction and LimitTickets.SavedVars.ignoreSafeContainers and not isProbablySafeContainer(itemName) then
-            -- A safe container, ignore.
-        	hideReticleInfo(true)
-	    elseif isSearchAction and atMaxTickets and LimitTickets.SavedVars.crouchContainers then
-	        if LimitTickets.SavedVars.ticketWarningsOnly then
-            	setReticleText(false, ticketFormat, beCareful)
-	        elseif isCrouched() then
-            	setReticleText(true, ticketFormat, okToSearch)
+            -- Crouch to search bodies.
+	        if isCrouched() then
+            	setReticleText(true, corpseFormat, okToSearch)
 	        else
-            	setReticleText(false, ticketFormat, cannotSearch)
+            	setReticleText(false, corpseFormat, cannotSearch)
 	        end
-    	else
+	    elseif isSearchAction and LimitTickets.SavedVars.crouchContainers and isProbablySafeContainer(itemName)  then
+            -- Crouch to search containers.
+	        if isCrouched() then
+            	setReticleText(true, containerFormat, okToSearch)
+	        else
+            	setReticleText(false, containerFormat, cannotSearch)
+	        end
+    	elseif isSearchAction and DEBUG then
+            if isProbablySafeContainer(itemName) then
+            	setReticleText(true, containerFormat, "Debug")
+            else
+            	setReticleText(false, corpseFormat, "Debug")
+            end
+        else
     	    -- Anything else, don't show our warning.
         	hideReticleInfo(true)
 		end
@@ -278,11 +306,19 @@ local function StartInteraction_hook(...)
  	local atMaxTickets = playerTickets >= LimitTickets.SavedVars.maxTickets
  	local isTalkAction = "Talk" == actionNameToEnglishLookup[actionName]
     local isSearchAction = "Search" == actionNameToEnglishLookup[actionName]
+    local isUseAction = "Use" == actionNameToEnglishLookup[actionName]
     local isEmptyContainer = ADDITIONAL_INTERACT_INFO_EMPTY == additionalInfo -- 2 = an empty container
 
     local ticketString = string.format("%s/%s", ZO_LocalizeDecimalNumber(playerTickets), ZO_LocalizeDecimalNumber(LimitTickets.SavedVars.maxTickets))
 
-    if isTalkAction and isAssistant(itemName) then
+    if isUseAction and atMaxTickets and isJubileeCake(itemName) then
+        if isCrouched() then
+            chatText("At <<1>> tickets, but crouched, so eating the <<C:2>>.", ticketString, itemName)
+        else
+            chatText("At <<1>> tickets: crouch to eat the <<C:2>>.", ticketString, itemName)
+    		return true -- Disable interaction.
+        end
+    elseif isTalkAction and isAssistant(itemName) then
         if not LimitTickets.SavedVars.crouchAssistants then
             -- Freely use assistants if we're not explicitly crouching for them.
         elseif isCrouched() then
@@ -310,16 +346,18 @@ local function StartInteraction_hook(...)
         end
     elseif isSearchAction and isEmptyContainer then
         chatText("Fruitlessly searching the empty <<1>>.", itemName)
-    elseif isSearchAction and LimitTickets.SavedVars.ignoreSafeContainers and isProbablySafeContainer(itemName) then
-        chatText("Fearlessly searching the safe <<1>>.", itemName)
-    elseif isSearchAction and atMaxTickets and LimitTickets.SavedVars.crouchContainers then
-        if LimitTickets.SavedVars.ticketWarningsOnly then
-            chatText("At <<1>> tickets, but warnings only, so searching the <<C:2>>.", ticketString, itemName)
-        elseif isCrouched() then
-            chatText("At <<1>> tickets, but crouched, so searching the <<C:2>>.", ticketString, itemName)
-            -- chatText("Searching the <<C:1>>.", itemName)
+    elseif isSearchAction and LimitTickets.SavedVars.ignoreSafeContainers and not isProbablySafeContainer(itemName) then
+        if isCrouched() then
+            chatText("Crouched, so searching the <<C:1>>.", itemName)
         else
-    		chatError("Too many tickets (<<1>>): crouch to enable search.", ticketString)
+    		chatError("Crouch to search the <<C:1>>.", itemName)
+    		return true -- Disable interaction.
+        end
+    elseif isSearchAction and LimitTickets.SavedVars.crouchContainers and isProbablySafeContainer(itemName) then
+        if isCrouched() then
+            chatText("Crouched, so searching the <<C:1>>.", itemName)
+        else
+    		chatError("Crouch to search the <<C:1>>.", itemName)
     		return true -- Disable interaction.
         end
 	end

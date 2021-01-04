@@ -2,6 +2,8 @@ Changelog
 =========
 This changelog is a summary: for a more detailed breakdown, see https://github.com/DewiMorgan/LimitTickets/CHANGELOG.md
 
+1.3.1
+-----
 
 1.3.0
 -----
@@ -9,8 +11,13 @@ This changelog is a summary: for a more detailed breakdown, see https://github.c
 * DONE: Feature: Prevent players from handing in the quest. 
 * DONE: Feature: Make conversation-modding rely on checkbox settings.
 * DONE: Feature: Change disabled conversation options to say how many tickets there are.
+* DONE: Feature: Handle "Examine" items, too (these were handled automatically by handling conversations).
+* DONE: Feature: Handle "Use" items (the Jubilee cakes), too.
+* DONE: Fix: Update reticle messaging for search to match new constant state. 
 * DONE: Update: Change crouch-to-loot-corpse and crouch-to-search-container into constant toggles. 
-* DONE: Update: Add "Fish" to safe list.
+* DONE: Update: Added comments on where to find safe list items, for I18N pass.
+* DONE: Update: Added "Coffer", "Tomb Urn", "Fish" and "Book" to container list.
+* DONE: Update: Renamed "Millet Basket" to "Millet Sack".
 * DONE: Code Cleanup: Removed excessive hooking logic.
 * WontDo: Maintain a list of killed mob names, and use those names to tell if something's a corpse. Can something be killed and lootable without the player getting a notification? (Turns out, we don't care about corpses).
 * WontDo: GetLootTargetInfo() = INTERACT_TARGET_TYPE_OBJECT for bodies, chests, and resource nodes; INTERACT_TARGET_TYPE_NONE for backpacks, desks, barrels, etc. Thanks to code65536 from ESO forums! (Sadly, these seem only available once you've started looting, which may be too late for the tickets: will need testing.)
@@ -75,8 +82,7 @@ This changelog is a summary: for a more detailed breakdown, see https://github.c
 Future
 ------
 * Ongoing: Maintain lists of known-safe (and known-unsafe?) containers.
-* ToDo: Feature: Handle "Examine" items and "Use" items, too.
-* ToDo: Feature: Some kinda warning on gifted tickets... where do they come from? Ingame mail? I don't know!
+* ToDo: Feature: Some kinda warning on gifted tickets... These are held in the 4th tab of the crown store. Can't seem to hook them, though...
 * ToDo: Feature: Internationalization.
 * ToDo: ReOrg: Make this ext'n a minimalist, no-config ticket limiter: move other features (ignore assistants, ignore NPCs, etc) to other minimalist addons. Rename this one big do-everything app to something more general, like "Annoying Sneak" or something.
 * ToDo: Bug: If you log out while stealthed, you'll be standing but stealthed (eye reticle, unable to mount, etc) when you log in. Same if you zone while stealthed. This is ESO's bug, not mine! But should maybe detect, on player load, and not consider this state to be crouched?
@@ -113,5 +119,6 @@ Other Stuff
 * Addon idea: examine item under reticle, log all lang-names, dump log, etc.
 * Addon idea: examine dialog (events triggered, methods called, values set, etc).
 * Addon idea: dolmen grinding: reticle pointer to next ws/dolmen/chest; map/minimap map lines to show dolmen cycle order and which is next; switch to zoomies between dolmen and wayshrine; clearly-visible reticle target at dolmens; assistant crouch (overrides defaults in my other addons).
+* Experiment: Can a 3D item be made from planes, and be moved around?
 * Pull request: Add toggle to Keybinder, between windows-user-account-wide and eso-user-account-wide.
 * Pull request: Change Minion to allow the blocked categories (obsolete, dev tools) on a settings toggle, default off; and to show a sign in the list when an addon is obsolete.
