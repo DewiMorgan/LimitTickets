@@ -4,6 +4,10 @@ This changelog is a summary: for a more detailed breakdown, see https://github.c
 
 1.3.1
 -----
+* DONE: Update: Added TONS of container names. There may still be a few DLC or quest-related ones, though. If I can translate all these, the list may become lib-worthy.
+  What I REALLY need, though, is a way to crowdsource item names!  
+* DONE: Fix: removed debugging reticle text for corpses and containers.
+* DONE: Code Cleanup: Remove unused vars, etc.
 
 1.3.0
 -----
@@ -19,6 +23,7 @@ This changelog is a summary: for a more detailed breakdown, see https://github.c
 * DONE: Update: Added "Coffer", "Tomb Urn", "Fish" and "Book" to container list.
 * DONE: Update: Renamed "Millet Basket" to "Millet Sack".
 * DONE: Code Cleanup: Removed excessive hooking logic.
+* DONE: Code Cleanup: Automated build pipeline.
 * WontDo: Maintain a list of killed mob names, and use those names to tell if something's a corpse. Can something be killed and lootable without the player getting a notification? (Turns out, we don't care about corpses).
 * WontDo: GetLootTargetInfo() = INTERACT_TARGET_TYPE_OBJECT for bodies, chests, and resource nodes; INTERACT_TARGET_TYPE_NONE for backpacks, desks, barrels, etc. Thanks to code65536 from ESO forums! (Sadly, these seem only available once you've started looting, which may be too late for the tickets: will need testing.)
 * WontDo: Feature: Check if you autoloot tickets from corpses even with autoloot off. If not: Option to turn off autoloot for corpses if at ticket limit? (WontDo, I think you get the tickets ANYWAY but it's irrelevant because once the corpse spawns with tickets in, it's too late to help the player. See CraftAutoLoot addon for similar features.)

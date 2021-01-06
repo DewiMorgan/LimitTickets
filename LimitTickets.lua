@@ -17,12 +17,12 @@ LimitTickets.description = "Causes actions with annoying effects (like getting t
 LimitTickets.SavedVarsVersion = "1" -- If this changes, older saved vars are WIPED.
 LimitTickets.SavedVars = {} -- The actual real data.
 
-local DEBUG = true
-local function dx(...)
-    if DEBUG then
-        d(...)
-    end
-end
+--local DEBUG = true
+--local function dx(...)
+--    if DEBUG then
+--        d(...)
+--    end
+--end
 
 local lamOptions = {} -- The LibAddonMenu options page.
 
@@ -44,50 +44,106 @@ local defaultSavedVars = { -- Will be created in save file if not found, but won
 
 -- Local vars
 -- Modified "Stealth to..." control from NoAccidentalStealing.
-local reticleInfoLabel = CreateControlFromVirtual("UseInfo", ZO_ReticleContainerInteract, "ZO_KeybindButton")
+local reticleInfoLabel = CreateControlFromVirtual(string.format("%s_UseInfo", LimitTickets.name), ZO_ReticleContainerInteract, "ZO_KeybindButton")
 
 -- Safe containers, not corpses or consolidate area loot. Ideally, we would just detect corpses and mark them as UN-safe.
 local probablySafeContainerLookup = {
-    ["Apple Basket"]   = true,
-    ["Apple Crate"]    = true,
-    ["Apples"]         = true,
-    ["Backpack"]       = true,
-    ["Bookshelf"]      = true,
-    ["Barrel"]         = true,
-    ["Barrels"]        = true,
-    ["Basket"]         = true,
-    ["Cabinet"]        = true,
-    ["Cauldron"]       = true,
-    ["Cupboard"]       = true,
-    ["Coffer"]         = true, -- Vivec Impresario tent.
-    ["Corn Basket"]    = true,
-    ["Crate"]          = true,
-    ["Crates"]         = true,
-    ["Desk"]           = true,
-    ["Drawers"]        = true,
-    ["Dresser"]        = true,
-    ["Fish"]           = true, -- Searchable fish rack, eg at Philosopher's Cradle crafting area in Blackreach.
-    ["Flour Sack"]     = true,
-    ["Greens Basket"]  = true,
-    ["Heavy Crate"]    = true,
-    ["Heavy Sack"]     = true,
-    ["Jewelry Box"]    = true,
-    ["Keg"]            = true,
-    ["Loose Tile"]     = true,
-    ["Melon Basket"]   = true,
-    ["Millet Basket"]  = true,
-    ["Nightstand"]     = true,
-    ["Pumpkin Basket"] = true,
-    ["Rack"]           = true,
-    ["Rubble"]         = true,
-    ["Sack"]           = true,
-    ["Saltrice Sack"]  = true,
-    ["Seasoning Sack"] = true,
-    ["Tomato Crate"]   = true,
-    ["Tomb Urn"]       = true, -- eg Shroud Hearth Barrow in the Rift
-    ["Trunk"]          = true,
-    ["Urn"]            = true,
-    ["Wardrobe"]       = true,
+    -- Items "Confirmed from image" may be MANY years out of date!
+    -- Some have since been removed from the game, renamed, or had their verbs changed.
+    -- While some may not exist, none are likely to be names of corpses, so it
+    -- seems OK to err on the side of caution and keep them in until confirmed gone.
+    -- Items "NOT CONFIRMED" or quest targets may be very hard to get translations for :(
+    -- Location information is ESSENTIAL for this!
+    ["Apple Basket"]                = true, -- [owned] Daggerfall Marketplace stalls, Rosy Lion.
+    ["Apple Crate"]                 = true, --   NOT CONFIRMED!
+    ["Apples"]                      = true, --   NOT CONFIRMED!
+    ["Backpack"]                    = true, -- [owned] Daggerfall Rosy Lion.
+    ["Barrel of Kindlepitch"]       = true, --   NOT CONFIRMED! Exists as "Imperial Incursion" quest item, was "Use"able in now-removed Mathiisen quest, but is it ever "Search"able?
+    ["Barrel"]                      = true, -- [owned] Daggerfall Bank, Marketplace stalls, Rosy Lion.
+    ["Barrels"]                     = true, -- [owned] Daggerfall Bank, Clothing & Enchanting stores, Rosy Lion.
+    ["Basket"]                      = true, -- [owned] Daggerfall Marketplace stalls, Rosy Lion.
+    ["Battered Chest"]              = true, --   NOT CONFIRMED! Orkey's Hollow, top of a pillar, requires "The Frozen Man" quest
+    ["Bone Cart"]                   = true, -- Confirmed by image, no location?
+    ["Bones"]                       = true, -- Confirmed by image, no location?
+    ["Book"]                        = true, -- Patheirry House, Daggerfall (next to "Captain Margaux' Place" player home).
+    ["Bookshelf"]                   = true, -- Daggerfall Bank, Mage's Guild, Rosy Lion.
+    ["Bosmer Vase"]                 = true, --   NOT CONFIRMED! "Over the Edge" quest target?
+    ["Burnt Barrel"]                = true, -- Outside Orkey's Hollow, Bleakrock Isle; Speckled Shell plantation, Khenarthi's Roost.
+    ["Burnt Barrels"]               = true, -- Speckled Shell plantation, Khenarthi's Roost.
+    ["Burnt Crate"]                 = true, -- Speckled Shell plantation, Khenarthi's Roost.
+    ["Burnt Crates"]                = true, -- Outside Orkey's Hollow, Bleakrock Isle; Speckled Shell plantation, Khenarthi's Roost.
+    ["Cabinet"]                     = true, -- [owned] Daggerfall Clothing, Mage's Guild, Rosy Lion & Enchanting stores.
+    ["Cauldron"]                    = true, -- [owned] Daggerfall Marketplace stalls, Rosy Lion.
+    ["Charred Workbench"]           = true, --   NOT CONFIRMED! Speckled Shell Plantation, Khenarthi's Roost, "The Family Business" quest
+    ["Cheese Sack"]                 = true, -- Western Skyrim, Giant's Camps, and Ysmgar's Beach.
+    ["Coffer"]                      = true, -- Vivec Impresario tent.
+    ["Corn Basket"]                 = true, -- [owned] Daggerfall Marketplace stalls.
+    ["Crate"]                       = true, -- [owned] Daggerfall Bank, Marketplace stalls, Rosy Lion.
+    ["Crates"]                      = true, -- [owned] Daggerfall Bank, Blacksmithing balcony, Rosy Lion.
+    ["Creepy Basket"]               = true, --   NOT CONFIRMED!
+    ["Cupboard"]                    = true, -- [owned] Daggerfall Bank, Mage's Guild, Rosy Lion.
+    ["Desk"]                        = true, -- [owned] Daggerfall Bank, Mage's Guild, Rosy Lion.
+    ["Drawers"]                     = true, --   NOT CONFIRMED!
+    ["Dresser"]                     = true, -- [owned] Daggerfall Bank, Mage's Guild, Rosy Lion.
+    ["Dwarven Chest"]               = true, --   NOT CONFIRMED! Mzeneldt, maybe "The Dangerous Past. " quest item?
+    ["Fish"]                        = true, -- Searchable fish rack, eg at Philosopher's Cradle crafting area in Blackreach.
+    ["Flour Sack"]                  = true, -- [owned] Daggerfall Marketplace stalls, Rosy Lion.
+    ["Greens Basket"]               = true, -- [owned] Daggerfall Marketplace stalls.
+    ["Heavy Crate"]                 = true, --   NOT CONFIRMED!
+    ["Heavy Sack"]                  = true, --   NOT CONFIRMED!
+    ["Jewelry Box"]                 = true, -- Vivec Impresario tent.
+    ["Keg"]                         = true, -- [owned] Daggerfall Rosy Lion.
+    ["Lockbox"]                     = true, --   NOT CONFIRMED!
+    ["Hidden Panel"]                = true, -- Hew's Bane caches.
+    ["Loose Tile"]                  = true, -- Greenshade, Rulanyil's Fall, "The Merethic collection" quest; Hew's Bane caches.
+    ["Loot Corpse"]                 = true, --   NOT CONFIRMED!
+    ["Melon Basket"]                = true, -- [owned] Daggerfall Marketplace stalls.
+    ["Millet Sack"]                 = true, -- [owned] Daggerfall Marketplace stalls.
+    ["Nightstand"]                  = true, -- [owned] Daggerfall Bank & Clothing store, Mage's Guild.
+    ["Packed Mound"]                = true, -- Confirmed by image, "The Family Business" quest. Khenarthi's Roost, beach NE of Speckled Shell Plantation.
+    ["Produce Basket"]              = true, --   NOT CONFIRMED! May have been replaced by specific basket types?
+    ["Pumpkin Basket"]              = true, --   NOT CONFIRMED!
+    ["Rack"]                        = true, -- Vivec Impresario tent. [owned] Daggerfall Marketplace stalls, Rosy Lion.
+    ["Ram Horn Lamp"]               = true, --   NOT CONFIRMED! "The Citadel Must Fall" quest?
+    ["Restoration Staff"]           = true, -- Confirmed by image, "Soul Shriven in Coldharbour" quest, "Search", even though "Use" a bow.
+    ["Rid-Thar-ri'Datta's Chest"]   = true, --   NOT CONFIRMED! Reaper's March, Moonmont, "Desecrated Ground" quest target?
+    ["Rubble"]                      = true, --   NOT CONFIRMED!
+    ["Sack"]                        = true, -- [owned] Daggerfall Bank, Marketplace stalls, Mage's Guild, Rosy Lion.
+    ["Saltrice Sack"]               = true, -- [owned] Daggerfall Marketplace stalls.
+    ["Scorched Workbench"]          = true, --   NOT CONFIRMED! Speckled Shell Plantation, Khenarthi's Roost, "The Family Business" quest
+    ["Seasoning Sack"]              = true, -- [owned] Daggerfall Marketplace stalls.
+    ["Soggy Basket"]                = true, -- Confirmed by image, no location? "Over the Edge" quest target, Reaper's March?
+    ["Soggy Sack"]                  = true, -- Confirmed by image, no location? "Over the Edge" quest target, Reaper's March?
+    ["Sword Rack"]                  = true, --   NOT CONFIRMED! "Soul Shriven in Coldharbour" quest
+    ["Table Full of Swords"]        = true, --   NOT CONFIRMED! "Soul Shriven in Coldharbour" quest
+    ["Thunderbug Mound"]            = true, -- Confirmed by image, Khenarthi's Roost, Laughing Moons Plantation, "A Pinch of Sugar" quest.
+    ["Thunderbug Nest"]             = true, -- Confirmed by image, "For Everything a Season" quest, Vulkwasten.
+    ["Tomato Crate"]                = true, -- [owned] Daggerfall Marketplace stalls.
+    ["Tomb Urn"]                    = true, -- eg Shroud Hearth Barrow in the Rift, The Vault of Haman ForgeFire in Coldharbour
+    ["Treasure Chest"]              = true, --   NOT CONFIRMED! Believed to only be "Unlock" or "Use", not "Search".
+    ["Trunk"]                       = true, -- [owned] Daggerfall Bank & Clothing store, Rosy Lion.
+    ["Twin Axes"]                   = true, -- Confirmed by image, "Soul Shriven in Coldharbour" quest, "Search", even though "Use" a bow.
+    ["Urn"]                         = true, -- Vivec Impresario tent.
+    ["Valkynaz Seris' Chest"]       = true, --   NOT CONFIRMED! Reaver Citadel Pyramid, Coldharbour, after killing Valkynaz Seris.
+    ["Vat of Rotmeth Starter"]      = true, -- Confirmed by image, Reaper's March, Thormar, "Box of Riddles" quest target.
+    ["Wardrobe"]                    = true, -- [owned] Daggerfall Bank, Rosy Lion.
+    -- Translations even for these non-"Search" items would be extremely valuable.
+    -- Values from http://orcz.com/Category:TESO_Lootable_Objects that are not "Search"able.
+    -- Generic entries for "Corpse", "Loot Corpse", "Search", and "Weapon Rack" were ignored.
+    -- ["Bow Rack"]                    = false, -- Confirmed by image, "Soul Shriven in Coldharbour" quest, "Use" a "Bow". Rack isn't searchable.
+    -- ["Chest"]                       = false, -- Confirmed by image, no location? "Use", not "Search".
+    -- ["Chilled Flesh"]               = false, -- Confirmed by image, "The Castle of the Worm", "Harvest", not "Search".
+    -- ["Cocoon"]                      = false, -- Confirmed by image, "Dangerous Webs" quest, "Destroy", not "Search".
+    -- ["Colovian Mage's Chest"]       = false, -- Confirmed by image, "Senalana" delve, "Examine", not "Search".
+    -- ["Daedric Artifact Container"]  = false, -- Confirmed by image, "Knife Ear Grotto", "Take", not "Search".
+    -- ["Frostedge Clothing Basket"]   = false, -- Confirmed by image, "Hozzin's Folly" quest, "Use", not "Search".
+    -- ["Jakarn's Treasure"]           = false, -- Confirmed by image, "Innocent Scoundrel" quest, "Take", not "Search".
+    -- ["Restoration Staff Rack"]      = false, -- Confirmed by image, "Soul Shriven in Coldharbour" quest, "Search" a "Restoration Staff". No "Rack" in name.
+    -- ["Smoldering Alchemical Tools"] = false, -- Confirmed by image, "The Family Business" quest. "Examine", not "Use".
+    -- ["Twin Axe Rack"]               = false, -- Confirmed by image, "Soul Shriven in Coldharbour" quest, "Search" a "Twin Axes". No "Rack" in name.
+    -- ["Two-Handed Mace Rack"]        = false, -- Confirmed by image, "Soul Shriven in Coldharbour" quest, "Use" a "Two-Handed Mace".
+    -- ["Weathered Pack"]              = false, -- Confirmed by image, Orkey's Hollow, "The Frozen Man" quest? "Examine", not "Search".
+    -- ["Wine Rack"]                   = false, -- Confirmed by image, Bleakrock Village: but has since been renamed to "Rack".
 }
 local assistantLookup = {
     ["Fezez"]                 = true,
@@ -197,9 +253,9 @@ local function isProbablySafeContainer(name)
 end
 
 local function isJubileeCake(name)
-    -- Probably Won't work with translation.
-    --cakename = "Jubilee Cake"
-    --return str:sub(1, #start) == start
+    -- This approach is not guaranteed to work with all translated languages.
+    --cakeName = "Jubilee Cake"
+    --return name:sub(1, #cakeName) == cakeName
     return isJubileeCakeLookup[name]
 end
 
@@ -241,7 +297,6 @@ local function ModifyReticle_Hook(interactionPossible)
         local cannotEat = "crouch to eat."
         local okToTalk = "crouched, can talk"
         local cannotTalk = "crouch to talk"
-        local alwaysTalk = "can always talk"
         local okToSearch = "crouched, can search"
         local cannotSearch = "crouch to search"
 
@@ -282,12 +337,6 @@ local function ModifyReticle_Hook(interactionPossible)
 	        else
             	setReticleText(false, containerFormat, cannotSearch)
 	        end
-    	elseif isSearchAction and DEBUG then
-            if isProbablySafeContainer(itemName) then
-            	setReticleText(true, containerFormat, "Debug")
-            else
-            	setReticleText(false, corpseFormat, "Debug")
-            end
         else
     	    -- Anything else, don't show our warning.
         	hideReticleInfo(true)
@@ -369,7 +418,7 @@ local NeedToChangeGoodbye
 local LastQuestRewarded
 
 -- When any conversation begins, we set this false.
-local function OnChatterBegin(eventCode, chatterOptionCount) -- number, number
+local function OnChatterBegin(_, _) -- number, number
     NeedToChangeGoodbye = false
     LastQuestRewarded = nil
 end
@@ -382,7 +431,7 @@ end
 -- When response options are added to a conversation, check to see if they give
 -- quest rewards. Decline if too many tickets.
 
-local function PopulateChatterOption_Hook(self, controlID, optionIndex, optionText, optionType, optionalArg, isImportant, chosenBefore, importantOptions)
+local function PopulateChatterOption_Hook(self, controlID, _, optionText, optionType, _, _, _, _)
     local needToBlockAccept = false
     local optionControl
     local playerTickets
