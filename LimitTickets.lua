@@ -11,7 +11,7 @@ LimitTickets.name = "LimitTickets"
 LimitTickets.displayName = "Limit Tickets"
 LimitTickets.author = "Dewi Morgan @Farrier"
 LimitTickets.shortName = "LT" -- Not guaranteed unique, but OK for tagging messages, etc.
-LimitTickets.version = "1.3.1" -- Also change this in the .txt file, add changelog section.
+LimitTickets.version = "1.3.2" -- Also change this in the .txt file, and add changelog section.
 LimitTickets.description = "Causes actions with annoying effects (like getting too many tickets) to warn you and/or require you to crouch before doing them."
 
 LimitTickets.SavedVarsVersion = "1" -- If this changes, older saved vars are WIPED.
@@ -34,7 +34,7 @@ local defaultSavedVars = { -- Will be created in save file if not found, but won
     reticleMessages = true,
     ticketWarningsOnly = false,
     crouchNpc = true,
-    crouchAssistants = true, -- should probably be "crouchAllContainers", historical reasons.
+    crouchAssistants = true, -- should probably be "crouchAllAssistants", historical reasons.
     crouchAllNpc = false,
     crouchContainers = true, -- should probably be "crouchAllContainers", historical reasons.
     ignoreSafeContainers = true, -- should probably be "crouchAllCorpses", historical reasons.
@@ -55,7 +55,7 @@ local probablySafeContainerLookup = {
     -- Items "NOT CONFIRMED" or quest targets may be very hard to get translations for :(
     -- Location information is ESSENTIAL for this!
     ["Apple Basket"]                = true, -- [owned] Daggerfall Marketplace stalls, Rosy Lion.
-    ["Apple Crate"]                 = true, --   NOT CONFIRMED!
+    -- ["Apple Crate"]                 = true, --   NOT CONFIRMED! Doesn't exist in ESO's string table.
     ["Apples"]                      = true, --   NOT CONFIRMED!
     ["Backpack"]                    = true, -- [owned] Daggerfall Rosy Lion.
     ["Barrel of Kindlepitch"]       = true, --   NOT CONFIRMED! Exists as "Imperial Incursion" quest item, was "Use"able in now-removed Mathiisen quest, but is it ever "Search"able?
@@ -68,6 +68,7 @@ local probablySafeContainerLookup = {
     ["Book"]                        = true, -- Patheirry House, Daggerfall (next to "Captain Margaux' Place" player home).
     ["Bookshelf"]                   = true, -- Daggerfall Bank, Mage's Guild, Rosy Lion.
     ["Bosmer Vase"]                 = true, --   NOT CONFIRMED! "Over the Edge" quest target?
+    ["Bottle"]                      = true, -- Confirmed, one was somewhere in Vvardenfell dungeon. Maybe also Harborage.
     ["Burnt Barrel"]                = true, -- Outside Orkey's Hollow, Bleakrock Isle; Speckled Shell plantation, Khenarthi's Roost.
     ["Burnt Barrels"]               = true, -- Speckled Shell plantation, Khenarthi's Roost.
     ["Burnt Crate"]                 = true, -- Speckled Shell plantation, Khenarthi's Roost.
@@ -96,8 +97,8 @@ local probablySafeContainerLookup = {
     ["Lockbox"]                     = true, --   NOT CONFIRMED!
     ["Hidden Panel"]                = true, -- Hew's Bane caches.
     ["Loose Tile"]                  = true, -- Greenshade, Rulanyil's Fall, "The Merethic collection" quest; Hew's Bane caches.
-    ["Loot Corpse"]                 = true, --   NOT CONFIRMED!
     ["Melon Basket"]                = true, -- [owned] Daggerfall Marketplace stalls.
+    ["Metal Pellet Stockpile"]      = true, -- Confirmed, Clockwork City's Mechanical Fundament: "A Daily Grind" repeatable quest.
     ["Millet Sack"]                 = true, -- [owned] Daggerfall Marketplace stalls.
     ["Nightstand"]                  = true, -- [owned] Daggerfall Bank & Clothing store, Mage's Guild.
     ["Packed Mound"]                = true, -- Confirmed by image, "The Family Business" quest. Khenarthi's Roost, beach NE of Speckled Shell Plantation.
@@ -108,6 +109,7 @@ local probablySafeContainerLookup = {
     ["Restoration Staff"]           = true, -- Confirmed by image, "Soul Shriven in Coldharbour" quest, "Search", even though "Use" a bow.
     ["Rid-Thar-ri'Datta's Chest"]   = true, --   NOT CONFIRMED! Reaper's March, Moonmont, "Desecrated Ground" quest target?
     ["Rubble"]                      = true, --   NOT CONFIRMED!
+    ["Rubble Pile"]                 = true, -- Confirmed, Clockwork City, by entrance to Sanctuary of Verification.
     ["Sack"]                        = true, -- [owned] Daggerfall Bank, Marketplace stalls, Mage's Guild, Rosy Lion.
     ["Saltrice Sack"]               = true, -- [owned] Daggerfall Marketplace stalls.
     ["Scorched Workbench"]          = true, --   NOT CONFIRMED! Speckled Shell Plantation, Khenarthi's Roost, "The Family Business" quest
@@ -207,7 +209,7 @@ local function hideReticleInfo(isHidden)
     end
 end
 
--- Wrapper for d() to send to chat window.
+-- More correct alterative to d() for sending to chat window. Use d() or dx() for genuine debug text.
 local function chatText(...)
     if LimitTickets.SavedVars.debugMessages then
         CHAT_SYSTEM:AddMessage(string.format("%s: %s", LimitTickets.shortName, zo_strformat(...)))

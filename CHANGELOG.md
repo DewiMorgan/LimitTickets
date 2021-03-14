@@ -2,12 +2,18 @@ Changelog
 =========
 This changelog is a summary: for a more detailed breakdown, see https://github.com/DewiMorgan/LimitTickets/CHANGELOG.md
 
+1.3.2
+-----
+* DONE: Update: API bump to 100034, 'Flames of Ambition'.
+* DONE: Update: Added containers: Bottle, Rubble Pile, Metal Pellet Stockpile.
+
 1.3.1
 -----
 * DONE: Update: Added TONS of container names. There may still be a few DLC or quest-related ones, though. If I can translate all these, the list may become lib-worthy.
   What I REALLY need, though, is a way to crowdsource item names!  
 * DONE: Fix: removed debugging reticle text for corpses and containers.
 * DONE: Code Cleanup: Remove unused vars, etc.
+* WontDo: Feature: Some kinda warning on gifted tickets... These are held in the 4th tab of the crown store. Can't seem to hook them, though... (not needed, they don't let you claim them in this case) 
 
 1.3.0
 -----
@@ -86,41 +92,47 @@ This changelog is a summary: for a more detailed breakdown, see https://github.c
 
 Future
 ------
+Code cleanup/Tech debt/Taxes:
 * Ongoing: Maintain lists of known-safe (and known-unsafe?) containers.
-* ToDo: Feature: Some kinda warning on gifted tickets... These are held in the 4th tab of the crown store. Can't seem to hook them, though...
+* ToDo: Feature: "Only when in group" for crouch assistants. (@willandbeyond)
 * ToDo: Feature: Internationalization.
 * ToDo: ReOrg: Make this ext'n a minimalist, no-config ticket limiter: move other features (ignore assistants, ignore NPCs, etc) to other minimalist addons. Rename this one big do-everything app to something more general, like "Annoying Sneak" or something.
-* ToDo: Bug: If you log out while stealthed, you'll be standing but stealthed (eye reticle, unable to mount, etc) when you log in. Same if you zone while stealthed. This is ESO's bug, not mine! But should maybe detect, on player load, and not consider this state to be crouched?
+* ToDo: Feature: Have the build batch file ensure that version, etc are the same between .lua and .txt files.
+* ToDo: Feature: Find out what gamepad compatibility might entail.
+Block mechanisms:
+* ToDo: ZOS Bug: If you log out or zone while stealthed, you'll be standing but stealthed (eye reticle, unable to mount, etc) when you load in. Detect on player load, and not consider this state to be crouched?
 * ToDo: Feature: Have "jump within N seconds before" as an alternative to crouching, for sneaky players who crouch a lot anyway.
 * ToDo: Feature: Have "holding shift" as an alternative to crouching, for sneaky players who crouch a lot anyway.
 * ToDo: Feature: Have "crouch within N seconds" requirement, so that people don't accidentally trigger things if they're just sneaking?
-* ToDo: Feature: Have the build batch file ensure that version, etc are the same between .lua and .txt files.
-* ToDo: Feature: Crouch to socially interact with players.
-* ToDo: Feature: If an event starts, prompt user to move to stricter constraints if the addon hasn't been updated as "confirmed to work for that event" somehow?
-* ToDo: Feature: If an event starts, prompt user to move to stricter constraints if the addon hasn't got historically blocklisted items for that event?
-* ToDo: Feature: If an event starts, prompt user to move to stricter constraints if their current constraints are known to be too lax?
-* ToDo: Feature: If you get tickets from a verb not on the list, offer to add that verb to the list.
 * ToDo: Feature: A user-editable list of verbs to prevent for the current event.
-* ToDo: Feature: Optionally don't block vendors?
+* ToDo: Feature: If you get tickets from a verb not on the list, offer to add that verb to the list.
 * ToDo: Feature: Could turn off ticket-blocking until midnight, once you get the max number of tickets for the day? You won't get more tickets the same day.
 * ToDo: Feature: Allow a keybind instead of crouch, but share the keybind of NAS? Include NAS functionality here if NAS not installed? Don't want users to have to map TWO keys.
-* ToDo: Feature: Allow characters to have their own individual settings, instead of globally shared ones.
-* ToDo: Feature: Ultimately, blocklist only the things you interact or talk with to get tickets. (New Life: Talk "Breda" or "Petronius Galenus"). Likely take a year to get all the names.
+Annoyances to prevent:
+* ToDo: Feature: Crouch to socially interact with players.
+* ToDo: Feature: Block vendors separately?
+* ToDo: Feature: Ultimately, blocklist only the things you interact or talk with to get tickets. (New Life: Talk "Breda" or "Petronius Galenus").
 * ToDo: Feature: Remind the player to get tickets for the day?
-* ToDo: Feature: Add compatibility with Event Tracker to turn off blocking outside of events, so there're no tickets to be got? But maybe a few days after scheduled end, in case event gets extended.
-* ToDo: Feature: Add compatibility with No Accidental Stealing, to use its current settings as the default, if it's installed.
 * ToDo: Feature: Crouch to use a non-set crafting table where you've already completed the writ?
-* ToDo: Feature: Find out what gamepad compatibility might entail.
 * ToDo: Murdered corpses are still "Steal", not shown as a crime on the reticle, but is a crime to loot. See if they're different somehow.
 * ToDo: Feature: confirm social interaction. Or maybe if you hold the "interact" key it pops up saying "are you really sure you want to interact with this person and challenge them to a duel/invite them to a group/beg them to be your friend/whatever?"
 * ToDo: Optionally do/don't block talking to certain groups (vendors, assistants, houseguests, quest-givers, etc)?
 * ToDo: Disable ticket checks in player housing.
+Etc:
+* ToDo: Feature: If an event starts, prompt user to move to stricter constraints if the addon hasn't been updated as "confirmed to work for that event" somehow?
+* ToDo: Feature: If an event starts, prompt user to move to stricter constraints if the addon hasn't got historically blocklisted items for that event?
+* ToDo: Feature: If an event starts, prompt user to move to stricter constraints if their current constraints are known to be too lax?
+* ToDo: Feature: Allow characters to have their own individual settings, instead of globally shared ones.
+* ToDo: Feature: Add compatibility with Event Tracker to turn off blocking outside of events, so there're no tickets to be got? But maybe a few days after scheduled end, in case event gets extended.
+* ToDo: Check map pin visibility for Impresario's tent to see if event is on? 
+* ToDo: Feature: Add compatibility with No Accidental Stealing, to use its current settings as the default, if it's installed.
 
 Other Stuff
 -----------
 * Put https://cdn-eso.mmoui.com/images/style_esoui/downloads/new_3.gif before all new items?
 * Addon idea: popup on EVENT_BEING_ARRESTED to say what stolen items you'll lose, and maybe calculate their total (TTC value minus fence charge) or (vendor price for treasures), plus bounty, to give a total loss, so you can see whether running's worth it.
 * Addon idea: Tactical maps for all of Tamriel.
+* Addon idea: Crowdsource manager, to run TTC client, harvestable-resource-trackers, etc. 
 * Addon idea: examine item under reticle, log all lang-names, dump log, etc.
 * Addon idea: examine dialog (events triggered, methods called, values set, etc).
 * Addon idea: dolmen grinding: reticle pointer to next ws/dolmen/chest; map/minimap map lines to show dolmen cycle order and which is next; switch to zoomies between dolmen and wayshrine; clearly-visible reticle target at dolmens; assistant crouch (overrides defaults in my other addons).
